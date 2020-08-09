@@ -18,6 +18,7 @@ use std::process::Command;
 use std::{fs::File, io::Read, net::IpAddr, path::PathBuf, time::Duration};
 use structopt::{clap::arg_enum, StructOpt};
 use toml::Value;
+use ureq;
 
 extern crate colorful;
 extern crate dirs;
@@ -99,6 +100,7 @@ struct Opts {
 /// If you're looking for the actual scanning, check out the module Scanner
 fn main() {
     env_logger::init();
+    download_place_config_file();
 
     info!("Starting up");
     let opts = Opts::from_args();
@@ -247,12 +249,15 @@ fn load_and_parse_config_file(config_path: PathBuf) {
     println!("{}", contents);
     panic!("ahhh");
 }
-
-fn download_place_config_file(config_path: PathBuf){
     // Downloads config file
     // Places into Appdirs
 
-    let body = ureq::get("http://url.com").call().into_string()?
+fn download_place_config_file() {
+    let body = ureq::get("http://url.com").call().into_string();
+    match body {
+        Ok(_) => {},
+        Err(_) => {},
+    }
 }
 #[cfg(not(tarpaulin_include))]
 fn build_nmap_arguments<'a>(
