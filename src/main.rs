@@ -100,7 +100,6 @@ struct Opts {
 /// If you're looking for the actual scanning, check out the module Scanner
 fn main() {
     env_logger::init();
-    download_place_config_file();
 
     info!("Starting up");
     let opts = Opts::from_args();
