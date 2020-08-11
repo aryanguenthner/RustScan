@@ -15,7 +15,7 @@ use rlimit::Resource;
 use rlimit::{getrlimit, setrlimit};
 use std::collections::HashMap;
 use std::process::Command;
-use std::{fs::File, io::Read, net::IpAddr, path::PathBuf, time::Duration};
+use std::{fs::File, io::{Write, Read}, net::IpAddr, path::PathBuf, time::Duration};
 use structopt::{clap::arg_enum, StructOpt};
 use toml::Value;
 use ureq;
@@ -251,12 +251,16 @@ fn load_and_parse_config_file(config_path: PathBuf) {
     // Downloads config file
     // Places into Appdirs
 
-fn download_place_config_file() {
+fn download_place_config_file(config_location: PathBuf) {
     let body = ureq::get("http://url.com").call().into_string();
-    match body {
-        Ok(_) => {},
-        Err(_) => {},
-    }
+    let file = match body {
+        Ok(output) => {output},
+        Err(_) => {panic!("You do not have an internet connection")},
+    };
+
+    let mut file = File::create(config_location).unwrap();
+    file.write(body).unwrap();
+
 }
 #[cfg(not(tarpaulin_include))]
 fn build_nmap_arguments<'a>(
