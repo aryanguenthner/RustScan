@@ -217,7 +217,7 @@ fn get_config_file() {
         Ok(path) => path,
         Err(_) => panic!("Your system does not have appdirs."),
     };
-    info!("The location of config is {}", result_get_location);
+    info!("The location of config is {:?}", location);
 
     detail!(format!("The config file is at {:?}", location));
 
