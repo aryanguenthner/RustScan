@@ -15,7 +15,13 @@ use rlimit::Resource;
 use rlimit::{getrlimit, setrlimit};
 use std::collections::HashMap;
 use std::process::Command;
-use std::{fs::File, io::{Write, Read}, net::IpAddr, path::PathBuf, time::Duration};
+use std::{
+    fs::{File},
+    io::{Read, Write},
+    net::IpAddr,
+    path::PathBuf,
+    time::Duration,
+};
 use structopt::{clap::arg_enum, StructOpt};
 use toml::Value;
 use ureq;
@@ -211,6 +217,7 @@ fn get_config_file() {
         Ok(path) => path,
         Err(_) => panic!("Your system does not have appdirs."),
     };
+    info!("The location of config is {}", result_get_location);
 
     detail!(format!("The config file is at {:?}", location));
 
@@ -218,6 +225,7 @@ fn get_config_file() {
 }
 
 fn get_location_config() -> Result<std::path::PathBuf, &'static str> {
+    info!("Getting location of config file");
     let config_path = match dirs::config_dir() {
         Some(mut path) => {
             path.push("rustscan");
@@ -233,35 +241,30 @@ fn load_and_parse_config_file(config_path: PathBuf) {
     // Gets the file and returns the string of TOML
     // TODO quiet mode
 
-    let mut file = File::open(config_path).unwrap();
-    // TODO Download config file here
-    /*let mut file = match res {
-        Ok(_) => {}
-        Err(_) => {
-            Err("")
-        }
-    }*/
+    let mut file = File::open(&config_path);
+    let mut file: File = match file {
+        Ok(result) => result,
+        Err(_) => download_place_config_file(config_path),
+    };
     let mut contents = String::new();
     file.read_to_string(&mut contents).unwrap();
 
     contents.parse::<Value>().unwrap();
     println!("{}", contents);
-    panic!("ahhh");
-}
-    // Downloads config file
-    // Places into Appdirs
 
-fn download_place_config_file(config_location: PathBuf) {
-    let body = ureq::get("http://url.com").call().into_string();
-    let file = match body {
-        Ok(output) => {output},
-        Err(_) => {panic!("You do not have an internet connection")},
-    };
+}
+// Downloads config file
+// Places into Appdirs
+
+fn download_place_config_file(config_location: PathBuf) -> std::fs::File {
+    info!("Placing config file");
+    let body = ureq::get("http://url.com").call().into_string().unwrap();
 
     let mut file = File::create(config_location).unwrap();
-    file.write(body).unwrap();
-
+    file.write(body.as_bytes()).unwrap();
+    file
 }
+
 #[cfg(not(tarpaulin_include))]
 fn build_nmap_arguments<'a>(
     addr: &'a str,

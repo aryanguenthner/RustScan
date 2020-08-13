@@ -1,56 +1,27 @@
 language: rust
-
 os:
-  - linux
-  - osx
-  # - windows
-
+- linux
+- osx
 arch:
-  - amd64
-  - arm64
-
+- amd64
+- arm64
 services:
-  - docker  
-
+- docker
 before_install:
 - rustup component add rustfmt
-
-# cargo test
 rust:
-  - stable
-  - beta
+- stable
+- beta
 jobs:
   fast_finish: true
-
-# Cargo fmt
 script:
 - cargo build
 - cargo test
 - cargo fmt -- --check
-
-# automatic deployment to cargo on release
-# deploy:
-
-#   provider: releases
-#   api_key: "GITHUB OAUTH TOKEN"
-#   file: "FILE TO UPLOAD"
-#   skip_cleanup: true
-#   on:
-#     tags: true
-
-# after_success:
-#   - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
-#   - chmod +x send.sh
-#   - ./send.sh success $WEBHOOK_URL
-
-        # only deploy on master branch
-        # on:
-                # branch: master
-        # provider: cargo
-        # token: $crates 
-
-
 after_failure:
-  - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
-  - chmod +x send.sh
-  - ./send.sh failure $WEBHOOK_URL
+- wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
+- chmod +x send.sh
+- "./send.sh failure $WEBHOOK_URL"
+env:
+  global:
+    secure: Sa1kfAYZ2laclHe77rA6EdC+ANuytS8OWelk7GsQJ70FZkcV7KbLnEjyNy0vURwnhVUIZMQFBBSzddiSI9poU9e+yErHcZwDf5KqVr3/sHVNB3YeeAaVBGttEo6V/EuOrpPA1nibVcBBtQtUXRsCf5TLGvD48f/IE8q2BNVvXtWanbqo7FxMvG4ypqAezb0GAD5B9LjBcaRYq/jBfkFgBpGXIwi0+v7YvWFVEz4fq2Gq+rRKFfLxx3b6vyKM2sRuBR1ggN2DOYITHsfpp6NgOCieAUQIagOzzCeM2ZKkDI9uXSmzth5g+K0SFhoroTsMow4mNKuD3zROTA20bntys3mgoqCQLZq42DniJRR2pviz2PLc2DMXqlnkpJvIiy7Am9p5hAZOSBoy1KOlzBGNrt3d5zT0WwZGYLUY5tMDMKXr5yWTddY4jLBaEBJxac5YwtdEdknUMoY+36NVZ9tBdFPs/YmngxIhD6k7xhMN5wL45sm+JNThqjaA/CD3x56R3YixiVOK82yJ5x9nhjy7nDPTTI+EbDMnmJ+omgOij6NvaO8y6XyLS/9pb6His2WoIf8vebdGHbYaR8Z7uMeJB6agYtmifpra/w5SsMlhmX1pvsuKBD2QryVXd7bFXG7tKAQNlCULeOznGv0xhYtWZIntrnXKe443BSTlVgHtuPM=
