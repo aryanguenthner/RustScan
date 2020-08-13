@@ -258,7 +258,7 @@ fn load_and_parse_config_file(config_path: PathBuf) {
 
 fn download_place_config_file(config_location: PathBuf) -> std::fs::File {
     info!("Placing config file");
-    let body = ureq::get("http://url.com").call().into_string().unwrap();
+    let body = ureq::get("https://raw.githubusercontent.com/RustScan/RustScan/bee-add-config-file/config.toml").call().into_string().unwrap();
 
     let mut file = File::create(config_location).unwrap();
     file.write(body.as_bytes()).unwrap();
