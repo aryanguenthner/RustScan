@@ -25,6 +25,7 @@ use std::{
 use structopt::{clap::arg_enum, StructOpt};
 use toml::Value;
 use ureq;
+use serde_derive::Deserialize;
 
 extern crate colorful;
 extern crate dirs;
@@ -49,6 +50,7 @@ arg_enum! {
 
 #[derive(StructOpt, Debug)]
 #[structopt(name = "rustscan", setting = structopt::clap::AppSettings::TrailingVarArg)]
+#[derive(Deserialize)]
 /// Fast Port Scanner built in Rust.
 /// WARNING Do not use this program against sensitive infrastructure since the
 /// specified server may not be able to handle this many socket connections at once.
@@ -237,7 +239,7 @@ fn get_location_config() -> Result<std::path::PathBuf, &'static str> {
     config_path
 }
 
-fn load_and_parse_config_file(config_path: PathBuf) {
+fn load_and_parse_config_file(config_path: PathBuf) -> std::string::String {
     // Gets the file and returns the string of TOML
     // TODO quiet mode
 
@@ -250,7 +252,8 @@ fn load_and_parse_config_file(config_path: PathBuf) {
     file.read_to_string(&mut contents).unwrap();
 
     contents.parse::<Value>().unwrap();
-    println!("{}", contents);
+    info!("Contents of config is {}", contents);
+    contents
 
 }
 // Downloads config file
