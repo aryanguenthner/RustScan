@@ -13,10 +13,11 @@ use colorful::Colorful;
 use futures::executor::block_on;
 use rlimit::Resource;
 use rlimit::{getrlimit, setrlimit};
+use serde_derive::Deserialize;
 use std::collections::HashMap;
 use std::process::Command;
 use std::{
-    fs::{File},
+    fs::File,
     io::{Read, Write},
     net::IpAddr,
     path::PathBuf,
@@ -25,7 +26,6 @@ use std::{
 use structopt::{clap::arg_enum, StructOpt};
 use toml::Value;
 use ureq;
-use serde_derive::Deserialize;
 
 extern crate colorful;
 extern crate dirs;
@@ -254,14 +254,18 @@ fn load_and_parse_config_file(config_path: PathBuf) -> std::string::String {
     contents.parse::<Value>().unwrap();
     info!("Contents of config is {}", contents);
     contents
-
 }
 // Downloads config file
 // Places into Appdirs
 
 fn download_place_config_file(config_location: PathBuf) -> std::fs::File {
     info!("Placing config file");
-    let body = ureq::get("https://raw.githubusercontent.com/RustScan/RustScan/bee-add-config-file/config.toml").call().into_string().unwrap();
+    let body = ureq::get(
+        "https://raw.githubusercontent.com/RustScan/RustScan/bee-add-config-file/config.toml",
+    )
+    .call()
+    .into_string()
+    .unwrap();
 
     let mut file = File::create(config_location).unwrap();
     file.write(body.as_bytes()).unwrap();
